@@ -5,6 +5,8 @@ from rainbowio import colorwheel
 import neopixel
 import analogio
 
+num_pixels = 30
+
 #pin mapping
 pixel_pin = board.GP0
 sensor = analogio.AnalogIn(board.GP26)
@@ -20,28 +22,30 @@ CYAN = (0, 255, 255)
 BLUE = (0, 0, 255)
 PURPLE = (180, 0, 255)
 
+#create led object
+pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=0.1, auto_write=False, pixel_order=ORDER)
+
 def get_voltage():
-    voltage = sensor.value  # Scale the analog value (0-65535) into a smaller range
+    voltage = sensor.value // 655  # Scale the analog value (0-65535) into a smaller range
     print(f"DEBUG: voltage_note_keyboard() - Voltage: {voltage}")
 
     # Map voltage to one of 5 notes
-    if voltage > 6500:
+    if voltage > 100:
         return color_chase(RED, 0.1)
-    elif voltage > 4000:
+    elif voltage > 75:
         return color_chase(YELLOW, 0.1)
         # return audible_notes["NOTE_D4"]
-    elif voltage > 3500:
+    elif voltage > 50:
         return color_chase(GREEN, 0.1)
         # return audible_notes["NOTE_E4"]
-    elif voltage > 2500:
+    elif voltage > 25:
         return color_chase(CYAN, 0.1)
         # return audible_notes["NOTE_G4"]
     else:
         return color_chase(BLUE, 0.1)
         # return audible_notes["NOTE_A4"]
 
-#create led object
-pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=0.1, auto_write=False, pixel_order=ORDER)
+
 
 
 def color_chase(color, wait):
