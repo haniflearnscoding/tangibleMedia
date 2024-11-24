@@ -5,7 +5,7 @@ from rainbowio import colorwheel
 import neopixel
 import analogio
 
-num_pixels = 30
+
 
 #pin mapping
 pixel_pin = board.GP0
@@ -23,73 +23,23 @@ BLUE = (0, 0, 255)
 PURPLE = (180, 0, 255)
 
 #create led object
+num_pixels = 8
+ORDER = neopixel.GRB
 pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=0.1, auto_write=False, pixel_order=ORDER)
 
 def get_voltage():
     voltage = sensor.value // 655  # Scale the analog value (0-65535) into a smaller range
-    print(f"DEBUG: voltage_note_keyboard() - Voltage: {voltage}")
+    print(f"DEBUG:Voltage: {voltage}")
 
-    # Map voltage to one of 5 notes
-    if voltage > 100:
-        return color_chase(RED, 0.1)
-    elif voltage > 75:
-        return color_chase(YELLOW, 0.1)
-        # return audible_notes["NOTE_D4"]
-    elif voltage > 50:
-        return color_chase(GREEN, 0.1)
-        # return audible_notes["NOTE_E4"]
-    elif voltage > 25:
-        return color_chase(CYAN, 0.1)
-        # return audible_notes["NOTE_G4"]
-    else:
-        return color_chase(BLUE, 0.1)
-        # return audible_notes["NOTE_A4"]
+    intensity = int(voltage * 255 / 100) # Scale voltage to from 0-100 to 0-255
+    print(f"DEBUG: Intensity: {intensity}")
 
-
-
-
-def color_chase(color, wait):
+    base_color = (intensity, 0, 0)  # Dynamic RED intensity
     for i in range(num_pixels):
-        pixels[i] = color
-        time.sleep(wait)
-        pixels.show()
-    time.sleep(0.5)
+        pixels[i] = base_color # For each pixel on trip set base color
 
-
-def rainbow_cycle(wait):
-    for j in range(255):
-        for i in range(num_pixels):
-            rc_index = (i * 256 // num_pixels) + j
-            pixels[i] = colorwheel(rc_index & 255)
-        pixels.show()
-        time.sleep(wait)
-
-
-
-
+    pixels.show()
 while True:
     get_voltage()
-    #shows red green blue
-    # pixels.fill(RED)
-    # pixels.show()
-    # # Increase or decrease to change the speed of the solid color change.
-    # time.sleep(1)
-    # pixels.fill(GREEN)
-    # pixels.show()
-    # time.sleep(1)
-    # pixels.fill(BLUE)
-    # pixels.show()
-    # time.sleep(1)
+    time.sleep(0.1)
 
-
-
-    #color chase, requires color and time
-    # color_chase(RED, 0.1)  # Increase the number to slow down the color chase
-    # color_chase(YELLOW, 0.1)
-    # color_chase(GREEN, 0.1)
-    # color_chase(CYAN, 0.1)
-    # color_chase(BLUE, 0.1)
-    # color_chase(PURPLE, 0.1)
-
-    # #rainbow, requires time - 0 meaning as fast as possible
-    # rainbow_cycle(0)
